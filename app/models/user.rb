@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
   # Setup accessible (or protected) attributes for your model
   attr_accessible :name, :email, :password, :password_confirmation, :remember_me, :opt_in
   
-  after_create :add_user_to_mailchimp unless Rails.env.test?
+  after_create :add_user_to_mailchimp, :send_welcome_email unless Rails.env.test?
   before_destroy :remove_user_from_mailchimp unless Rails.env.test?
   #after_create :send_welcome_email
 
@@ -55,6 +55,7 @@ class User < ActiveRecord::Base
 
   def send_welcome_email
     unless self.email.include?('@example.com') && Rails.env != 'test'
+      puts "send welcome email"
       UserMailer.welcome_email(self).deliver
     end
   end
